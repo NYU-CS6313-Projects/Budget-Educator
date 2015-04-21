@@ -30,8 +30,8 @@ function transform(attrName) {
 }
 
 function stringCompare(a, b) {
-    a = a.toLowerCase();
-    b = b.toLowerCase();
+    a = a.toString().toLowerCase();
+    b = b.toString().toLowerCase();
     return a > b ? 1 : a == b ? 0 : -1;
 }
 
