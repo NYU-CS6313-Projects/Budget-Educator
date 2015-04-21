@@ -1,4 +1,4 @@
-# Project X
+# Project School Budget
 
 TODO describe project here
 
