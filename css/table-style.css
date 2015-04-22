@@ -1,0 +1,30 @@
+td { break-word: word-wrap; }
+
+.sidebar{
+	position: fixed;
+  top: 51px;
+  bottom: 0;
+  z-index: 1000;
+  display: block;
+  /*padding: 20px;*/
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+}
+
+.sidebar-right{
+	right:0;
+  border-left: 1px solid #eee;
+}
+
+.sidebar-left{
+  left: 0;
+  border-right: 1px solid #eee;
+
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}

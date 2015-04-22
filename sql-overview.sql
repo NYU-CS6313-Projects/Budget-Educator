@@ -1,12 +1,25 @@
 SELECT 
 	budget.`DBN` AS `DBN`,
-	progress.`school_name` AS `School Name`,
+	geographical.`Location_Name` AS 'School Name',
 	budget.`Total_Budget` AS `Budget`,
+	demographics.`total_enrollment` AS `Total Enrollment`,
+	(budget.`Total_Budget`/demographics.`total_enrollment` ) AS 'Budget Per Student',
+
+	geographical.`Location_Type_Description` AS `School Type`,
+	geographical.`Location_Category_Description` AS `School Category`,
+	geographical.`Primary_Address` AS `Street Address`,
+	geographical.`City` AS `City`,
+	geographical.`State_Code` AS `State`,
+	geographical.`Zip` AS `Zip Code`,
+	geographical.`boroughCode` AS `Borough`,
+	geographical.`latitude` AS `Latitude`,
+	geographical.`longitude` AS `Longitude`,
+	geographical.`loc` AS `Coordinates`,
+
 	progress.`progress_report_type` AS `Report Type`,
 	progress.`progress_report_grade` AS `Report Grade`,
 	demographics.`fl_percent` AS `FL Percent`,
 	demographics.`frl_percent` AS `FRL Percent`,
-	demographics.`total_enrollment` AS `Total Enrollment`,
 	demographics.`prek` AS `Pre-K Demographics`,
 	demographics.`k` AS `K Demographics`,
 	demographics.`grade1` AS `Grade 1 Demographics`,
@@ -48,9 +61,9 @@ SELECT
 	graduation_rates.`Advanced Regents - n`, 
 	graduation_rates.`Advanced Regents - % of cohort`, 
 	graduation_rates.`Advanced Regents - % of grads`, 
-	graduation_rates.`Regents w/o Advanced - n`, 
-	graduation_rates.`Regents w/o Advanced - % of cohort`, 
-	graduation_rates.`Regents w/o Advanced - % of grads`, 
+	graduation_rates.`Regents without Advanced - n`, 
+	graduation_rates.`Regents without Advanced - % of cohort`, 
+	graduation_rates.`Regents without Advanced - % of grads`, 
 	graduation_rates.`Local - n`, 
 	graduation_rates.`Local - % of cohort`, 
 	graduation_rates.`Local - % of grads`, 
@@ -80,10 +93,11 @@ SELECT
 	math_scores.`Pct Level 4` AS `Percent of Students Scoring Level 4 in Math`
 
 FROM budget 
-	INNER JOIN progress ON progress.DBN=budget.DBN 
 	INNER JOIN demographics on demographics.DBN=budget.DBN
-	INNER JOIN graduation_rates on graduation_rates.DBN=budget.DBN
-	INNER JOIN ela_scores on ela_scores.DBN=budget.DBN
-	INNER JOIN math_scores on math_scores.DBN=budget.DBN
+	INNER JOIN geographical on geographical.DBN=budget.DBN
+	LEFT JOIN progress ON progress.DBN=budget.DBN 
+	LEFT JOIN graduation_rates on graduation_rates.DBN=budget.DBN
+	LEFT JOIN ela_scores on ela_scores.DBN=budget.DBN
+	LEFT JOIN math_scores on math_scores.DBN=budget.DBN
 
 ORDER BY DBN
