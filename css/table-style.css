@@ -5,15 +5,22 @@ body {
 td { break-word: word-wrap; }
 
 .sidebar{
-	position: fixed;
+  position: fixed;
   top: 51px;
   bottom: 0;
   z-index: 1000;
   display: block;
-  /*padding: 20px;*/
+  padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
   background-color: #fafafa;
+  max-height: 200px;
+  border-bottom: 1px solid #eee;
+}
+@media (min-width: 768px) {
+  .sidebar{
+    max-height: 100%;
+  }
 }
 
 .sidebar-right{
