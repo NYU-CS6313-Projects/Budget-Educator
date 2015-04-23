@@ -9,7 +9,7 @@ td { break-word: word-wrap; }
   /*padding: 20px;*/
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: #fafafa;
 }
 
 .sidebar-right{
@@ -27,4 +27,13 @@ td { break-word: word-wrap; }
     height: auto;
     max-height: 200px;
     overflow-x: hidden;
+}
+
+.schoolSelected{
+	background-color: #565656 !important;
+	color: white;
+}
+
+.dropdownSelected{
+	background-color: #d3d3d3;
 }

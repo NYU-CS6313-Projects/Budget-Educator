@@ -20,7 +20,11 @@ var tabulate = function (data,columns) {
 	    .data(data)
 	    .enter()
 	  .append('tr')
- 
+	  .attr('id', function (d) { return d['DBN']; } )
+	  .on( 'click', function() {
+		  $( this ).toggleClass( 'schoolSelected' );
+		});
+
 	var cells = rows.selectAll('td')
 	    .data(function(row) {
 	    	return columns.map(function (column) {
@@ -33,7 +37,7 @@ var tabulate = function (data,columns) {
  
   return table;
 }
- 
+
 d3.csv("overview.csv", function( directory ) {
 	var columns = [], yAxis = [], key;
 
@@ -48,7 +52,8 @@ d3.csv("overview.csv", function( directory ) {
 		$( "<li/>", {
   		html: "<a href='#'>" + yAxis[i] + "</a>",
 		  click: function() {
-		    alert( yAxis[i] );
+		    // Function to change or reload scatterplot here
+		    $( this ).toggleClass( 'dropdownSelected' );
 		  }
 		})
 		  .appendTo( $("#y-axis") );
@@ -58,7 +63,8 @@ d3.csv("overview.csv", function( directory ) {
   	$( "<li/>", {
   		html: "<a href='#'>" + schoolType[i] + "</a>",
 		  click: function() {
-		    alert( schoolType[i] );
+		    // Function to filter by schools
+		    $( this ).toggleClass( 'dropdownSelected' );
 		  }
 		})
 		  .appendTo( $("#school-type") );
