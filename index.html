@@ -53,8 +53,11 @@
 				<table id="directory" class="table table-striped">
 				</table>
 			</div>
-      <div class="col-sm-4 col-sm-offset-4 col-md-5 col-md-offset-3 main" id="scatterplot">
+      <div class="col-sm-4 col-sm-offset-4 col-md-5 col-md-offset-3 main">
         Scatterplot
+        <div id="scatterplot"></div>
+        <p><b>X-Axis:</b> <span id="x-a">Total Budget / Number of Students (in School)</span> </p>
+        <p><b>Y-Axis:</b> <span id="y-a"></span> </p>
       </div>
       <div class="col-sm-4 col-md-4 main" id="map">
         Map
@@ -69,6 +72,7 @@
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
   <script src="scripts/map.js"></script>
   <script type="text/javascript">
+
     // Imports the CSV, fills in the Y-Axis listing and school listing in table
     d3.csv("overview.csv", function( directory ) {
 
@@ -79,12 +83,15 @@
       cacheData( directory );
 
       // Load up and populate the scatterplot
+      var initialY = $('#y-axis li.dropdownSelected a')[0].text;
       var plot = loadScatterPlot();
-      populatePlot( plot, $('#y-axis li.dropdownSelected a')[0].text );
+      $( "#y-a" ).html( initialY );
+      populatePlot( plot, initialY );
 
       // Configure the y-axis dropdown to update the scatterplot on click
       $('#y-axis li a').on('click', function(e){
         populatePlot( plot, $(this)[0].text );
+        $( "#y-a" ).html( $(this)[0].text );
       });
     });
   </script>
