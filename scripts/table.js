@@ -48,39 +48,42 @@ var tabulate = function (data, columns) {
   return table;
 }
 
-// Imports the CSV, fills in the Y-Axis listing and school listing in table
-d3.csv("overview.csv", function( directory ) {
+var appendToDropdown = function( ddID, ddArr, callFunction ){
+  for( var i = 0; i < ddArr.length; i++ ){
+    $( "<li/>", {
+      html: "<a href='#'>" + ddArr[i] + "</a>",
+      click: callFunction
+    })
+      .appendTo( $(ddID) );
+  }
+}
+
+var loadInterface = function( directory ){
 	var columns = [], yAxis = [], key;
 
 	// Gets all the names of the (first) object's (school's) attributes and
 	// allocates them into either y-Axis array or column array (for sidebar)
-  for ( key in directory[0] ) {
-      if ( directory[0].hasOwnProperty(key)) {
-      	if( key == 'DBN' || key == 'School Name' ) columns.push( key );
-      	else if( $.inArray( key, excludes ) == -1 ) yAxis.push( key );
-      }
-  }
+	for ( key in directory[0] ) {
+	  if ( directory[0].hasOwnProperty(key)) {
+	    if( key == 'DBN' || key == 'School Name' ) columns.push( key );
+	    else if( $.inArray( key, excludes ) == -1 ) yAxis.push( key );
+	  }
+	}
+	// Add elements required for dropdown for y-axis, only one may be selcted
+	appendToDropdown( "#y-axis", yAxis, function() {
+	    $( "#y-axis li" ).removeClass( 'dropdownSelected' );
+	    $( this ).addClass( 'dropdownSelected' );
+	  } );
 
-  // Add elements required for dropdown for y-axis, only one may be selcted
-  appendToDropdown( "#y-axis", yAxis, function() {
-		    $( "#y-axis li" ).removeClass( 'dropdownSelected' );
-		    $( this ).addClass( 'dropdownSelected' );
-		  } );
+	// Add elements required for dropdown for school type, many may be selected
+	appendToDropdown( "#school-type", schoolType, function() {
+	    $( this ).toggleClass( 'dropdownSelected' );
+	  } );
 
-  // Add elements required for dropdown for school type, many may be selected
-  appendToDropdown( "#school-type", schoolType, function() {
-		    $( this ).toggleClass( 'dropdownSelected' );
-		  } );
+	// Select the first entry in the y-axis dropdown 
+	$( "#y-axis li:first-child" ).addClass( 'dropdownSelected' );
 
-  var table = tabulate( directory, columns );
-})
+	// Return the table obj that contains all the school data
+  	return tabulate( directory, columns );
 
-var appendToDropdown = function( ddID, ddArr, callFunction ){
-	for( var i = 0; i < ddArr.length; i++ ){
-		$( "<li/>", {
-  		html: "<a href='#'>" + ddArr[i] + "</a>",
-		  click: callFunction
-		})
-		  .appendTo( $(ddID) );
-  }
 }

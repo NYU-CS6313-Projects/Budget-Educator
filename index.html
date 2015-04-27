@@ -8,7 +8,8 @@
 	<script type="text/javascript" src="libraries/bootstrap.min.js"></script>
 	<script type="text/javascript" src="libraries/knockout-2.2.0.js"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/table-style.css">
+  <link rel="stylesheet" href="css/table-style.css">
+  <link rel="stylesheet" href="css/scatterplot-style.css">
 </head>
 
 <body>
@@ -62,5 +63,28 @@
 
 	
 	<script src="scripts/table.js"></script>
+  <script src="scripts/scatterplot.js"></script>
+  <script type="text/javascript">
+
+// Imports the CSV, fills in the Y-Axis listing and school listing in table
+d3.csv("overview.csv", function( directory ) {
+
+  // Initialize the interface and save the table for faster lookup
+  var table = loadInterface( directory );
+
+  // Store the directory into a var in scatterplot.js to prevent having to pass data around more than once
+  cacheData( directory );
+
+  // Load up and populate the scatterplot
+  var plot = loadScatterPlot();
+  populatePlot( plot, $('#y-axis li.dropdownSelected a')[0].text );
+
+  // Configure the y-axis dropdown to update the scatterplot on click
+  $('#y-axis li a').on('click', function(e){
+    populatePlot( plot, $(this)[0].text );
+  });
+});
+
+  </script>
 </body>
 </html>
