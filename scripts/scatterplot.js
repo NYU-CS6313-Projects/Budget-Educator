@@ -1,8 +1,9 @@
 // Function to get all selected school's DBN
 // $(".schoolSelected").each( function(index, school){ console.log( school.id ); } );
 var width = $(document).width() * 0.35,
-	height = $(document).height() * 0.75,
-	padding = 40,
+	height = width,
+	padding_height = 70,
+	padding_width = 100,
 	data;
 
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
@@ -16,17 +17,25 @@ var populatePlot = function( plot, yAxisLabel ){
 	var x_range = d3.extent(data, function (d, i) { return parseInt(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
 					.domain([0, x_range[1]])
-					.range([padding,width]);
+					.range([padding_width,width+(padding_width/4)]);
 
 	// Get y-axis scale (only accounting for numeric data like student math exam proficiency for now)
 	var y_range = d3.extent(data, function(d, i) { if( !isNaN(d[yAxisLabel]) ) return parseInt(d[yAxisLabel]); });
-	var y_scale = d3.scale.linear()
+
+
+	var y_scale;
+	if( isNaN(y_range[0]) )
+		y_scale = d3.scale.ordinal()
+					.domain(data.map(function (d) { return d[yAxisLabel]; }))
+					.rangeBands([0, height], 1);
+	else
+		y_scale = d3.scale.linear()
 					.domain([y_range[1], 0])
-					.range([padding,height]);
+					.range([padding_height,height]);
 
 	// Create the axes and have their tick markers create a grid-like pattern
-	var xAxis = d3.svg.axis().scale(x_scale).orient("bottom").tickSize(-height+padding/2);
-	var yAxis = d3.svg.axis().scale(y_scale).orient("left").tickSize(-width+padding/2);
+	var xAxis = d3.svg.axis().scale(x_scale).orient("bottom").tickSize(-height+padding_height/2);
+	var yAxis = d3.svg.axis().scale(y_scale).orient("left").tickSize(-width+padding_width/2);
 
 	// Append x-axis to scatterplot. 
 	// Move axis to bottom of graph and rotate text slightly to fit values. Do not rotate 0
@@ -36,13 +45,16 @@ var populatePlot = function( plot, yAxisLabel ){
 			.duration(750)
 		.call(xAxis)
         .selectAll("text")
-            .attr("transform", function(d){ if(d) return "translate(0," + padding/2 + "), rotate(-65)"});
+            .attr("transform", function(d){ if(d) return "translate(0," + padding_height/4 + "), rotate(-65)"});
 
 	plot.select(".y.axis")
-		.attr("transform", "translate(" + padding + ",0)" )
+		.attr("transform", "translate(" + padding_width + ",0)" )
 		.transition()
 			.duration(750)
 		.call(yAxis);
+	plot.select(".y.label")
+		.text(yAxisLabel)
+
 
 	// Retrieve old points, if any
 	var oldPlots = plot.selectAll("circle")
@@ -53,8 +65,8 @@ var populatePlot = function( plot, yAxisLabel ){
 				.duration(750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return( isNaN(d[yAxisLabel]) ) ? 0 : y_scale(d[yAxisLabel]);  },
-				"r": function(d)  { return( isNaN(d[yAxisLabel]) ) ? 0 : 5; }
+				"cy": function(d) { return ( y_scale(d[yAxisLabel]) ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"r": function(d)  { return 3; }
 			});
 
 	// Append new points if needed
@@ -62,8 +74,8 @@ var populatePlot = function( plot, yAxisLabel ){
 	        .append("circle")
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return( isNaN(d[yAxisLabel]) ) ? 0 : y_scale(d[yAxisLabel]);  },
-				"r": function(d)  { return( isNaN(d[yAxisLabel]) ) ? 0 : 5; }
+				"cy": function(d) { return ( y_scale(d[yAxisLabel]) ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"r": function(d)  { return 3; }
 			})
 				.style('opacity', 0)
 			.transition()
@@ -82,16 +94,16 @@ var loadScatterPlot = function(){
 
 	var plot = d3.select("#scatterplot")
 					.append("svg")
-					.attr("width", width + padding)
-					.attr("height", height + padding);
+					.attr("width", width + padding_width)
+					.attr("height", height + padding_height);
 
 	// "Border" off the scatterplot
 	plot.append("rect").attr({
-		"width": width - padding/2,
-		"height": height - padding/2,
+		"width": width - padding_width/2,
+		"height": height - padding_height/2,
 		"fill": "none",
 		"stroke": "lightgray",
-		"transform": "translate(" + padding + " " + padding/2 + ")"
+		"transform": "translate(" + padding_width + " " + padding_height/2 + ")"
 	});
 
 	var xAxis = d3.svg.axis().orient("bottom");
@@ -99,6 +111,19 @@ var loadScatterPlot = function(){
 
 	plot.append("g").attr("class", "x axis").call(xAxis);
 	plot.append("g").attr("class", "y axis").call(yAxis);
+
+    plot.append("text")
+        	.attr("class", "x label")
+        	.attr("text-anchor", "center")
+        	.attr("x", (width+padding_width/2)/2)
+        	.attr("y", height + padding_height - 12)
+        	.text("Budget Per Student");
+
+	plot.append("text")
+    	.attr("class", "y label")
+    	.attr("text-anchor", "center")
+    	.attr("transform", "translate(" + (width + (padding_width/2) + 12) + ", " + padding_height/2 + ") rotate(90)")
+    	.text("Y-Axis");
 
 	return plot;
 }
