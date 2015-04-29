@@ -3,7 +3,7 @@
 var width = $(document).width() * 0.35,
 	height = width,
 	padding_height = 70,
-	padding_width = 100,
+	padding_width = 110,
 	data;
 
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
