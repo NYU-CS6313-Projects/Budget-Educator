@@ -53,7 +53,7 @@ var populatePlot = function( plot, yAxisLabel ){
 			.duration(750)
 		.call(yAxis);
 	plot.select(".y.label")
-		.text(yAxisLabel)
+		.text("Y-Axis: " + yAxisLabel)
 
 
 	// Retrieve old points, if any

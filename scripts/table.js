@@ -16,8 +16,8 @@ var excludes = ['DBN', 'School Name', 'Street Address', 'City', 'State',
 // This array holds the distinct school types from the list of schools
 // Currently implemented this way instead of adding each distinct school type as
 // one iterates through the data mainly to save on 1000+ checks
-var schoolType = ['Elementary', 'Junior High-Intermediate-Middle', 'K-8', 
-	'Secondary School', 'Early Childhood', 'High school', 'K-12 all grades' ];
+var schoolCategory = ['Elementary', 'Intermediate', 'K-8', 
+	'Secondary School', 'Early Childhood', 'High School', 'K-12' ];
 
 // Function to create the table given the data and the column names --- tabulate
 var tabulate = function (data, columns) {
@@ -83,11 +83,20 @@ var loadInterface = function( directory ){
 	appendToDropdown( "#y-axis", yAxis, function() {
 	    $( "#y-axis li" ).removeClass( 'dropdownSelected' );
 	    $( this ).addClass( 'dropdownSelected' );
+	    $( "#y-axis-label" ).text( "Y-Axis: " + $( "#y-axis > .dropdownSelected > a" ).text() );
 	  } );
 
 	// Add elements required for dropdown for school type, many may be selected
-	appendToDropdown( "#school-type", schoolType, function() {
+	appendToDropdown( "#school-category", schoolCategory, function() {
 	    $( this ).toggleClass( 'dropdownSelected' );
+
+	    var selection = [];
+	    $( "#school-category > .dropdownSelected > a" ).each(function( index ) {
+			  if( selection.length < 2 ) selection.push( $(this).text() );
+			});
+
+			$("#school-category-label").text( "School Category: " + selection.join( ", ") 
+				+ ( ( $( "#school-category > .dropdownSelected > a" ).size() > 2 ) ? ", ..." : "" ) );
 	  } );
 
 	// Select the first entry in the y-axis dropdown 
