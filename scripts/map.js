@@ -1,12 +1,6 @@
-var map;
+var url = 'https://aartyparty.cartodb.com/api/v2/viz/2ab32f3e-ede5-11e4-a96e-0e43f3deba5a/viz.json';
 
-function initialize() {
-	var mapOptions = {
-		zoom: 10,
-		center: new google.maps.LatLng(40.7, -74)
-	};
-	map = new google.maps.Map(document.getElementById('map'),
-		mapOptions);
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
+cartodb.createVis('map', url)
+	.done(function(vis, layers) {
+		var map = vis.getNativeMap();
+	});
