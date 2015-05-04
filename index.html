@@ -111,9 +111,12 @@
 
       $( "#clear" ).on('click', function() {
 
+        $("#y-axis-label").text( "Y-Axis: " );
+        $("#school-category-label").text( "School Category: " );
         remove( "#y-axis li", 'dropdownSelected' );
         remove( "#school-category li", 'dropdownSelected' );
         remove( ".schoolSelected", 'schoolSelected' );
+
         highlight( [], table);
         sortBySelection( false );
       });
