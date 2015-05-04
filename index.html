@@ -44,6 +44,9 @@
               <ul class="dropdown-menu scrollable-menu" id="y-axis"></ul>
             </li>
         </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a id="clear" href="#">Clear All</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -69,6 +72,12 @@
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
   <script src="scripts/map.js"></script>
   <script type="text/javascript">
+
+    var remove = function( id, removingClass ){
+      $( id ).each(function( index ) {
+          $( this ).removeClass( removingClass );
+        });
+    }
 
     // Imports the CSV, fills in the Y-Axis listing and school listing in table
     d3.csv("overview.csv", function( directory ) {
@@ -98,7 +107,16 @@
           selection.push( school.id ); 
         });
         highlight(selection, table);
-      })
+      });
+
+      $( "#clear" ).on('click', function() {
+
+        remove( "#y-axis li", 'dropdownSelected' );
+        remove( "#school-category li", 'dropdownSelected' );
+        remove( ".schoolSelected", 'schoolSelected' );
+        highlight( [], table);
+        sortBySelection( false );
+      });
     });
   </script>
 </body>
