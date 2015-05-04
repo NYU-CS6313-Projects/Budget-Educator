@@ -106,3 +106,16 @@ var loadInterface = function( directory ){
   	return tabulate( directory, columns );
 
 }
+
+var sortBySelection = function( bySelection ){
+	var table = $("table");
+	if( bySelection ){
+		table.prepend( table.find( 'tr.' + "schoolSelected"));
+	}
+	else{
+		var tableBody = d3.select("tbody");
+		tableBody.selectAll("tr").sort( function(a, b){
+			return d3.ascending(a["School Name"].toLowerCase(), b["School Name"].toLowerCase());
+		});
+	}
+}

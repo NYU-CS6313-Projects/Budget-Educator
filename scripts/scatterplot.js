@@ -3,7 +3,7 @@
 var width = $(document).width() * 0.35,
 	height = width,
 	padding_height = 70,
-	padding_width = 100,
+	padding_width = 110,
 	data;
 
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
@@ -24,7 +24,7 @@ var populatePlot = function( plot, yAxisLabel ){
 
 
 	var y_scale;
-	if( isNaN(y_range[0]) )
+	if( isNaN(parseInt(y_range[0])) )
 		y_scale = d3.scale.ordinal()
 					.domain(data.map(function (d) { return d[yAxisLabel]; }))
 					.rangeBands([0, height], 1);
@@ -88,6 +88,8 @@ var populatePlot = function( plot, yAxisLabel ){
 				.duration(750)
 				.style('opacity', 0)
 			.remove();
+
+    applyLasso( plot );
 }
 
 var loadScatterPlot = function(){
@@ -95,7 +97,8 @@ var loadScatterPlot = function(){
 	var plot = d3.select("#scatterplot")
 					.append("svg")
 					.attr("width", width + padding_width)
-					.attr("height", height + padding_height);
+					.attr("height", height + padding_height)
+					.style("cursor", "crosshair");
 
 	// "Border" off the scatterplot
 	plot.append("rect").attr({
@@ -127,3 +130,121 @@ var loadScatterPlot = function(){
 
 	return plot;
 }
+
+// Based off of URL:
+// jsfiddle.net/pPMqQ/34/
+var applyLasso = function( plot ){
+	var table = $("table")[0].rows;
+	var dataPoints = plot.select("circle").data(data);
+
+	var coords = [];
+	var line = d3.svg.line();
+	var drag = d3.behavior.drag()
+
+					// Begin drag event
+					.on("dragstart", function(){
+						coords = [];
+						svg = d3.select(this);
+
+						// Clear previous selections and lines
+						d3.selectAll("svg path").remove();
+						svg.select(".selection").remove();
+
+						// Append selection line
+						svg.append("path")
+							.attr("class", "selection");
+					})
+
+					// During drag event
+					.on("drag", function(){
+
+						// Track mouse
+						coords.push(d3.mouse(this));
+						svg = d3.select(this);
+
+						// Update selection line to mouse's path
+						svg.select(".selection")
+							.attr({
+								d: line(coords)
+							});
+
+						// Find out which points were inside the draw path
+						var selected = [];
+						svg.selectAll("circle").each(function(d, i) {
+							var point = [d3.select(this).attr("cx"), d3.select(this).attr("cy")];
+							if( pointInPoly(point, coords) ){
+								selected.push(d["DBN"]);
+							}
+						});
+						highlight(selected, table);
+
+						if( table.length > 0 ){
+							// Update list of schools based on selected
+							selected.forEach( function( selectedDBN ){
+								table[selectedDBN].setAttribute("class", "schoolSelected" );
+							});
+						}
+
+						// From table.js
+						sortBySelection(true);
+					})
+
+					// Remove the path after the drag ends
+					.on("dragend", function(){
+						var svg = d3.select(this);
+
+						// Remove all paths if user just clicks 
+						if( coords.length === 0 ){
+							d3.selectAll("svg path").remove();
+							unhighlight(table);
+							sortBySelection(false);
+							return;
+						}
+
+						// Clear the drag trace from the plot
+						d3.selectAll("svg path").remove();
+					});
+
+	plot.call(drag);
+}
+
+var pointInPoly = function(point, vs){
+	var xi,xj,i,intersect,
+		x = point[0],
+		y = point[1],
+		inside = false;
+
+	for( var i = 0, j = vs.length-1; i < vs.length; j = i++ ){
+		xi = vs[i][0],
+		yi = vs[i][1],
+		xj = vs[j][0],
+		yj = vs[j][1],
+		intersect = ((yi > y) != (yj  > y)) &&
+					(x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+		if( intersect ) inside = !inside;
+	}
+	return inside;
+}
+
+var unhighlight = function(table){
+	d3.selectAll("circle").classed("highlighted", false);
+	if( table.length > 0 ){
+		// Update list of schools based on selected
+		for( var i = 0; i < table.length; ++i ){
+			if( table[i].className = "schoolSelected" )
+				table[i].className = "";
+		}
+	}
+}
+
+var highlight = function(schools, table){
+	unhighlight(table);
+
+	d3.selectAll("circle").data(data).filter(function(d,i){
+		return schools.indexOf(d["DBN"]) > -1;
+	}).classed("highlighted", true);
+}
+
+
+
+
