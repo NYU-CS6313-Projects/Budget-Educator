@@ -24,3 +24,15 @@ circle{
 circle[cy="-999"]{
     opacity: 0 !important;
 }
+
+circle.highlighted{
+    fill: red;
+    opacity: 0.6 !important;
+}
+
+path.selection{
+    stroke: black;
+    stroke-width: 1;
+    fill: gray;
+    opacity: 0.4;
+}
