@@ -81,6 +81,7 @@
 
     // Imports the CSV, fills in the Y-Axis listing and school listing in table
     d3.csv("overview.csv", function( directory ) {
+      var categories = [];
 
       // Initialize the interface and save the table for faster lookup
       var table = loadInterface( directory );
@@ -91,13 +92,32 @@
       // Load up and populate the scatterplot
       var initialY = $('#y-axis li.dropdownSelected a')[0].text;
       var plot = loadScatterPlot();
-      $( "#y-a" ).html( initialY );
-      populatePlot( plot, initialY );
+      populatePlot( plot, initialY, categories );
 
       // Configure the y-axis dropdown to update the scatterplot on click
       $('#y-axis li a').on('click', function(e){
-        populatePlot( plot, $(this)[0].text );
-        $( "#y-a" ).html( $(this)[0].text );
+        populatePlot( plot, $(this)[0].text, categories );
+      });
+
+      // Configure the school category dropdown to update the scatterplot 
+      $('#school-category').on('click', function(e){
+        var ylabel = $("#y-axis .dropdownSelected a")[0].text;
+
+        // Update the scatterplot based on what school categories to focus on
+        categories = [];
+        $("#school-category .dropdownSelected a").each(function(index, category){
+          categories.push(category.text);
+        })
+
+        // After populating the plot, update the table to only show schools of that category
+        if ( populatePlot( plot, ylabel, categories ) ){
+          var shownSchools = [];
+          fetchFilteredData().forEach( function(d,i){
+            shownSchools.push( d["DBN"] );
+          });
+          limitSchoolCategory(shownSchools);
+        }
+
       });
 
       // Configure each school selection to update the scatterplot on click
@@ -117,8 +137,14 @@
         remove( "#school-category li", 'dropdownSelected' );
         remove( ".schoolSelected", 'schoolSelected' );
 
+        // Default y-axis selection to the first item
+        $( "#y-axis li:first-child" ).addClass( 'dropdownSelected' );
+        categories = [];
+
         highlight( [], table);
+        showAllTableEntries();
         sortBySelection( false );
+        populatePlot( plot, 'Total Enrollment', categories );
       });
     });
   </script>

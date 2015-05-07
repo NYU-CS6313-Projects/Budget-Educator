@@ -4,29 +4,39 @@ var width = $(document).width() * 0.35,
 	height = width,
 	padding_height = 70,
 	padding_width = 110,
-	data;
+	data,
+	filtered;
 
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
 var cacheData = function( tableData ){ data = tableData; }
 
+var fetchFilteredData = function(){ return filtered; }
+
 // Repopulate the scatterplot based on some yAxisLabel
-var populatePlot = function( plot, yAxisLabel ){
-	console.log( yAxisLabel );
+var populatePlot = function( plot, yAxisLabel, schoolType ){
+	filtered = data.filter(function(d) { 
+		if( schoolType.length > 0  ) 
+			return ($.inArray(d["School Category"], schoolType) > -1);
+		else
+			return true;
+	});
 
 	// Get x-axis (budget per student) scale
-	var x_range = d3.extent(data, function (d, i) { return parseInt(d["Budget Per Student"]); });
+	var x_range = d3.extent(filtered, function (d, i) { return parseInt(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
 					.domain([0, x_range[1]])
 					.range([padding_width,width+(padding_width/4)]);
 
 	// Get y-axis scale (only accounting for numeric data like student math exam proficiency for now)
-	var y_range = d3.extent(data, function(d, i) { if( !isNaN(d[yAxisLabel]) ) return parseInt(d[yAxisLabel]); });
+	var y_range = d3.extent(filtered, function(d, i) { 
+		if( !isNaN(d[yAxisLabel]) ){ return Math.ceil(parseFloat(d[yAxisLabel]));}
+	});
 
 
 	var y_scale;
 	if( isNaN(parseInt(y_range[0])) )
 		y_scale = d3.scale.ordinal()
-					.domain(data.map(function (d) { return d[yAxisLabel]; }))
+					.domain(filtered.map(function (d) { if( d[yAxisLabel] !== "" ) return d[yAxisLabel]; }))
 					.rangeBands([0, height], 1);
 	else
 		y_scale = d3.scale.linear()
@@ -58,14 +68,14 @@ var populatePlot = function( plot, yAxisLabel ){
 
 	// Retrieve old points, if any
 	var oldPlots = plot.selectAll("circle")
-						.data(data, function(d){ return d["DBN"]; });
+						.data(filtered, function(d){ return d["DBN"]; });
 
 	// Update the values of existing points
 	oldPlots.transition()
 				.duration(750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( y_scale(d[yAxisLabel]) ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"cy": function(d) { return ( d[yAxisLabel] !== "" ) ? y_scale(d[yAxisLabel]) : -999;  },
 				"r": function(d)  { return 3; }
 			});
 
@@ -74,7 +84,7 @@ var populatePlot = function( plot, yAxisLabel ){
 	        .append("circle")
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( y_scale(d[yAxisLabel]) ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"cy": function(d) { return ( d[yAxisLabel] !== "" ) ? y_scale(d[yAxisLabel]) : -999;  },
 				"r": function(d)  { return 3; }
 			})
 				.style('opacity', 0)
@@ -239,10 +249,11 @@ var unhighlight = function(table){
 
 var highlight = function(schools, table){
 	unhighlight(table);
-
+	console.log( schools );
 	d3.selectAll("circle").data(data).filter(function(d,i){
 		return schools.indexOf(d["DBN"]) > -1;
 	}).classed("highlighted", true);
+
 }
 
 

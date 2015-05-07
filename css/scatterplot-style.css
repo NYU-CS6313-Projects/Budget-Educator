@@ -27,7 +27,7 @@ circle[cy="-999"]{
 
 circle.highlighted{
     fill: red;
-    opacity: 0.6 !important;
+    opacity: 1 !important;
 }
 
 path.selection{
