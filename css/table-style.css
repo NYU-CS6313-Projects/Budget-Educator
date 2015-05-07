@@ -69,3 +69,7 @@ td { break-word: word-wrap; }
 .data{
   font-size: small;
 }
+
+.schoolName{
+  font-weight: bold;
+}
