@@ -21,6 +21,13 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 			return true;
 	});
 
+	// Reset the table, has to be here due to asynchronous D3
+	var shownSchools = [];
+  fetchFilteredData().forEach( function(d,i){
+    shownSchools.push( d["DBN"] );
+  });
+  limitSchoolCategory(shownSchools);
+
 	// Get x-axis (budget per student) scale
 	var x_range = d3.extent(filtered, function (d, i) { return parseInt(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
