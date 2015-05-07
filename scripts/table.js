@@ -1,17 +1,7 @@
 // This array holds the column names of those we are excluding from Y-Axis
 var excludes = ['DBN', 'School Name', 'Street Address', 'City', 'State', 
 	'Zip Code', 'Borough', 'Latitude', 'Longitude', 'Coordinates', 'Budget',
-	'Budget Per Student', 'Number of Students Tested for ELA', 
-	'Number of Students Scoring Level 1 in ELA', 'Still Enrolled - n',
-	'Number of Students Scoring Level 2 in ELA', 'Dropped Out - n',
-	'Number of Students Scoring Level 3 in ELA', 'Advanced Regents - n',
-	'Number of Students Scoring Level 4 in ELA', 'Regents without Advanced - n',
-	'Number of Students Tested for Math', 'Number of Regents in Cohort',
-	'Number of Students Scoring Level 1 in Math', 
-	'Number of Students Scoring Level 2 in Math', 
-	'Number of Students Scoring Level 3 in Math',
-	'Number of Students Scoring Level 4 in Math',
-	'Number of Graduation Students in Cohort'];
+	'Budget Per Student', 'Report Type'];
 
 // This array holds the distinct school types from the list of schools
 // Currently implemented this way instead of adding each distinct school type as
@@ -53,7 +43,7 @@ var tabulate = function (data, columns) {
       })
       .enter()
     .append('td')
-      .text(function (d) { return d.value })
+      .text(function (d) { return d.value });
  
   return table;
 }

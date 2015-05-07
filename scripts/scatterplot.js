@@ -31,6 +31,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 			return true;
 	});
 
+
 	// Get x-axis (budget per student) scale
 	var x_range = d3.extent(filtered, function (d, i) { return parseFloat(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
@@ -48,8 +49,14 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 
 	var y_scale;
 	if( isNaN(parseInt(y_range[0])) ){
+		// Darn those empty strings. Hmph.
+		filtered = filtered.filter( function(d) { return d[yAxisLabel].replace(/ /g,'') !== "" });
+		filtered.sort( function(a,b) {
+			return d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
+		})
+
 		y_scale = d3.scale.ordinal()
-					.domain(filtered.map(function (d) { if( d[yAxisLabel] !== "" ) return d[yAxisLabel]; }))
+					.domain(filtered.map(function (d) { return d[yAxisLabel]; } ))
 					.rangeBands([0, height], 1);
 	}
 	else{
@@ -115,6 +122,14 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 			.remove();
 
     applyLasso( plot );
+
+
+	// Reset the table, has to be here due to asynchronous D3
+	var shownSchools = [];
+	fetchFilteredData().forEach( function(d,i){
+		shownSchools.push( d["DBN"] );
+	});
+	limitSchoolCategory(shownSchools);
 }
 
 var loadScatterPlot = function(){
@@ -264,6 +279,7 @@ var unhighlight = function(table){
 
 var highlight = function(schools, table){
 	unhighlight(table);
+	console.log( schools );
 	d3.selectAll("circle").data(data).filter(function(d,i){
 		return schools.indexOf(d["DBN"]) > -1;
 	}).classed("highlighted", true);

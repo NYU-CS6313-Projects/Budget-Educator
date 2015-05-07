@@ -109,14 +109,7 @@
           categories.push(category.text);
         })
 
-        // After populating the plot, update the table to only show schools of that category
-        if ( populatePlot( plot, ylabel, categories ) ){
-          var shownSchools = [];
-          fetchFilteredData().forEach( function(d,i){
-            shownSchools.push( d["DBN"] );
-          });
-          limitSchoolCategory(shownSchools);
-        }
+        populatePlot( plot, ylabel, categories );
 
       });
 
