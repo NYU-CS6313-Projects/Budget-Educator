@@ -43,7 +43,7 @@ var tabulate = function (data, columns) {
       })
       .enter()
     .append('td')
-      .text(function (d) { return d.value });
+      .html(function (d) { return  "<span class='data'></span> <p><b>" + d.value + "</b></p>"});
  
   return table;
 }

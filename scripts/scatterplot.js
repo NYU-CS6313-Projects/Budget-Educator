@@ -131,6 +131,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	var shownSchools = [];
 	fetchFilteredData().forEach( function(d,i){
 		shownSchools.push( d["DBN"] );
+    $( "#" + d["DBN"] + " .data" ).html( "<i>(" + yAxisLabel + ": " + ( (d[yAxisLabel].trim() !== "" ) ? d[yAxisLabel] : "N/A") + ")</i>" );
 	});
 	limitSchoolCategory(shownSchools);
 }
