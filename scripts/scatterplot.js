@@ -24,12 +24,17 @@ var fetchFilteredData = function(){ return filtered; }
 
 // Repopulate the scatterplot based on some yAxisLabel
 var populatePlot = function( plot, yAxisLabel, schoolType ){
+		console.log( schoolType );
 	filtered = data.filter(function(d) { 
-		if( schoolType.length > 0  ) 
+		if( schoolType.length > 0  ) {
 			return ($.inArray(d["School Category"], schoolType) > -1);
+		}
 		else
 			return true;
 	});
+	filtered = filtered.filter( function(d) { return d[yAxisLabel].replace(/ /g,'') !== "" });
+
+	console.log( filtered );
 
 
 	// Get x-axis (budget per student) scale
@@ -41,8 +46,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	// Get y-axis scale 
 	var y_range = d3.extent(filtered, function(d, i) { 
 		if( !isNaN(d[yAxisLabel]) ){ 
-			console.log(d[yAxisLabel]);
-			return Math.ceil(parseInt(d[yAxisLabel]));
+			return Math.ceil(parseFloat(d[yAxisLabel]));
 		}
 	});
 
@@ -50,7 +54,6 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	var y_scale;
 	if( isNaN(parseInt(y_range[0])) ){
 		// Darn those empty strings. Hmph.
-		filtered = filtered.filter( function(d) { return d[yAxisLabel].replace(/ /g,'') !== "" });
 		filtered.sort( function(a,b) {
 			return d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
 		})
@@ -97,7 +100,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 				.duration(750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( d[yAxisLabel] !== "" ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"cy": function(d) { return ( d[yAxisLabel] ) ? y_scale(d[yAxisLabel]) : -999;  },
 				"r": function(d)  { return 3; }
 			});
 
@@ -106,7 +109,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	        .append("circle")
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( d[yAxisLabel] !== "" ) ? y_scale(d[yAxisLabel]) : -999;  },
+				"cy": function(d) { return ( d[yAxisLabel] ) ? y_scale(d[yAxisLabel]) : -999;  },
 				"r": function(d)  { return 3; }
 			})
 				.style('opacity', 0)
@@ -279,7 +282,6 @@ var unhighlight = function(table){
 
 var highlight = function(schools, table){
 	unhighlight(table);
-	console.log( schools );
 	d3.selectAll("circle").data(data).filter(function(d,i){
 		return schools.indexOf(d["DBN"]) > -1;
 	}).classed("highlighted", true);
