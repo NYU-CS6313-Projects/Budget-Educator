@@ -7,6 +7,16 @@ var width = $(document).width() * 0.35,
 	data,
 	filtered;
 
+var colorMap = {
+	'Elementary': 'blue',
+	'Intermediate': 'green',
+	'K-8': 'red',
+	'Secondary School': 'orange',
+	'Early Childhood': 'lightblue',
+	'High School': 'lightgreen',
+	'K-12': 'pink'
+}
+
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
 var cacheData = function( tableData ){ data = tableData; }
 
@@ -22,26 +32,31 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	});
 
 	// Get x-axis (budget per student) scale
-	var x_range = d3.extent(filtered, function (d, i) { return parseInt(d["Budget Per Student"]); });
+	var x_range = d3.extent(filtered, function (d, i) { return parseFloat(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
 					.domain([0, x_range[1]])
 					.range([padding_width,width+(padding_width/4)]);
 
-	// Get y-axis scale (only accounting for numeric data like student math exam proficiency for now)
+	// Get y-axis scale 
 	var y_range = d3.extent(filtered, function(d, i) { 
-		if( !isNaN(d[yAxisLabel]) ){ return Math.ceil(parseFloat(d[yAxisLabel]));}
+		if( !isNaN(d[yAxisLabel]) ){ 
+			console.log(d[yAxisLabel]);
+			return Math.ceil(parseInt(d[yAxisLabel]));
+		}
 	});
 
 
 	var y_scale;
-	if( isNaN(parseInt(y_range[0])) )
+	if( isNaN(parseInt(y_range[0])) ){
 		y_scale = d3.scale.ordinal()
 					.domain(filtered.map(function (d) { if( d[yAxisLabel] !== "" ) return d[yAxisLabel]; }))
 					.rangeBands([0, height], 1);
-	else
+	}
+	else{
 		y_scale = d3.scale.linear()
 					.domain([y_range[1], 0])
 					.range([padding_height,height]);
+	}
 
 	// Create the axes and have their tick markers create a grid-like pattern
 	var xAxis = d3.svg.axis().scale(x_scale).orient("bottom").tickSize(-height+padding_height/2);
@@ -249,7 +264,6 @@ var unhighlight = function(table){
 
 var highlight = function(schools, table){
 	unhighlight(table);
-	console.log( schools );
 	d3.selectAll("circle").data(data).filter(function(d,i){
 		return schools.indexOf(d["DBN"]) > -1;
 	}).classed("highlighted", true);

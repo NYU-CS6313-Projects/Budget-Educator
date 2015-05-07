@@ -121,7 +121,6 @@ var sortBySelection = function( bySelection ){
 }
 
 var limitSchoolCategory = function( showingSchoolsByDBN ){
-	console.log( showingSchoolsByDBN );
 	$( "#directory tr" ).each(function( index ) {
 		// it will be displayed
 		if( showingSchoolsByDBN.indexOf( $( this ).attr( 'id' ) ) > -1) $(this).show();
