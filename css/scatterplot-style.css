@@ -21,7 +21,7 @@ circle{
 }
 
 // Hide the null values
-circle[cy="-999"]{
+circle[r="0"]{
     opacity: 0 !important;
 }
 

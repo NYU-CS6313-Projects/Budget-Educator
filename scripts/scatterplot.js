@@ -23,7 +23,7 @@ var cacheData = function( tableData ){ data = tableData; }
 var fetchFilteredData = function(){ return filtered; }
 
 // Repopulate the scatterplot based on some yAxisLabel
-var populatePlot = function( plot, yAxisLabel, schoolType ){
+var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	filtered = data.filter(function(d) { 
 
 		// Remove nulls and empty strings
@@ -91,18 +91,23 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	plot.select(".y.label")
 		.text("Y-Axis: " + yAxisLabel)
 
+	// Track what points were selected before updating the graph
+    var selection = [];
+    table.selectAll(".schoolSelected").each(function(d,i){
+    	selection.push( d["DBN"] );
+    });
 
 	// Retrieve old points, if any
 	var oldPlots = plot.selectAll("circle")
-						.data(filtered, function(d){ return d["DBN"]; });
+						.data(filtered);
 
 	// Update the values of existing points
 	oldPlots.transition()
 				.duration(750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( d[yAxisLabel] ) ? y_scale(d[yAxisLabel]) : -999;  },
-				"r": function(d)  { return 3; }
+				"cy": function(d) { return y_scale(d[yAxisLabel]);  },
+				"r": function(d)  { return ( d[yAxisLabel] ) ? 3 : 0; }
 			});
 
 	// Append new points if needed
@@ -110,8 +115,8 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	        .append("circle")
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
-				"cy": function(d) { return ( d[yAxisLabel] ) ? y_scale(d[yAxisLabel]) : -999;  },
-				"r": function(d)  { return 3; }
+				"cy": function(d) { return y_scale(d[yAxisLabel]);  },
+				"r": function(d)  { return ( d[yAxisLabel] ) ? 3 : 0; }
 			})
 				.style('opacity', 0)
 			.transition()
@@ -135,6 +140,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 	limitSchoolCategory(shownSchools);
 
     applyLasso( plot );
+    highlight(selection, table); // Update the highlights
 }
 
 var loadScatterPlot = function(){
@@ -289,7 +295,6 @@ var highlight = function(schools, table){
 	}).classed("highlighted", true);
 
 }
-
 
 
 

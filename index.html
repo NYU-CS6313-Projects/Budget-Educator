@@ -91,11 +91,11 @@
       // Load up and populate the scatterplot
       var initialY = $('#y-axis li.dropdownSelected a')[0].text;
       var plot = loadScatterPlot();
-      populatePlot( plot, initialY, categories );
+      populatePlot( table, plot, initialY, categories );
 
       // Configure the y-axis dropdown to update the scatterplot on click
       $('#y-axis li a').on('click', function(e){
-        populatePlot( plot, $(this)[0].text, categories );
+        populatePlot( table, plot, $(this)[0].text, categories );
       });
 
       // Configure the school category dropdown to update the scatterplot 
@@ -108,7 +108,7 @@
           categories.push(category.text);
         })
 
-        populatePlot( plot, ylabel, categories );
+        populatePlot( table, plot, ylabel, categories );
 
       });
 
@@ -136,7 +136,7 @@
         highlight( [], table);
         showAllTableEntries();
         sortBySelection( false );
-        populatePlot( plot, 'Total Enrollment', categories );
+        populatePlot( table, plot, 'Total Enrollment', categories );
       });
     });
   </script>
