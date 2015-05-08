@@ -24,17 +24,23 @@ var fetchFilteredData = function(){ return filtered; }
 
 // Repopulate the scatterplot based on some yAxisLabel
 var populatePlot = function( plot, yAxisLabel, schoolType ){
-		console.log( schoolType );
 	filtered = data.filter(function(d) { 
-		if( schoolType.length > 0  ) {
-			return ($.inArray(d["School Category"], schoolType) > -1);
-		}
-		else
-			return true;
-	});
-	filtered = filtered.filter( function(d) { return d[yAxisLabel].replace(/ /g,'') !== "" });
 
-	console.log( filtered );
+		// Remove nulls and empty strings
+		if( (d[yAxisLabel]) && (d[yAxisLabel].replace(/ /g,'') != "") ){
+			if( schoolType.length > 0  )
+				return ($.inArray(d["School Category"], schoolType) > -1);
+			else
+				return true;
+		}
+		else{
+			return false;
+		}
+	});
+
+	filtered = filtered.sort( function(a,b) {
+		return d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
+	})
 
 
 	// Get x-axis (budget per student) scale
@@ -52,12 +58,7 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 
 
 	var y_scale;
-	if( isNaN(parseInt(y_range[0])) ){
-		// Darn those empty strings. Hmph.
-		filtered.sort( function(a,b) {
-			return d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
-		})
-
+	if( isNaN(parseFloat(y_range[0])) ){
 		y_scale = d3.scale.ordinal()
 					.domain(filtered.map(function (d) { return d[yAxisLabel]; } ))
 					.rangeBands([0, height], 1);
@@ -124,16 +125,16 @@ var populatePlot = function( plot, yAxisLabel, schoolType ){
 				.style('opacity', 0)
 			.remove();
 
-    applyLasso( plot );
-
-
 	// Reset the table, has to be here due to asynchronous D3
 	var shownSchools = [];
-	fetchFilteredData().forEach( function(d,i){
+	filtered.forEach( function(d,i){
 		shownSchools.push( d["DBN"] );
-    $( "#" + d["DBN"] + " .data" ).html( "<i>(" + yAxisLabel + ": " + ( (d[yAxisLabel].trim() !== "" ) ? d[yAxisLabel] : "N/A") + ")</i>" );
+    	$( "#" + d["DBN"] + " .data" )
+    		.html( "<i>(" + yAxisLabel + ": " + ((d[yAxisLabel].trim() !== "" ) ? d[yAxisLabel] : "N/A") + ")</i>" );
 	});
 	limitSchoolCategory(shownSchools);
+
+    applyLasso( plot );
 }
 
 var loadScatterPlot = function(){
@@ -179,7 +180,7 @@ var loadScatterPlot = function(){
 // jsfiddle.net/pPMqQ/34/
 var applyLasso = function( plot ){
 	var table = $("table")[0].rows;
-	var dataPoints = plot.select("circle").data(data);
+	var dataPoints = plot.selectAll("circle").data(filtered);
 
 	var coords = [];
 	var line = d3.svg.line();
@@ -283,7 +284,7 @@ var unhighlight = function(table){
 
 var highlight = function(schools, table){
 	unhighlight(table);
-	d3.selectAll("circle").data(data).filter(function(d,i){
+	d3.selectAll("circle").data(filtered).filter(function(d,i){
 		return schools.indexOf(d["DBN"]) > -1;
 	}).classed("highlighted", true);
 
