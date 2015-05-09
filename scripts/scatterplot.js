@@ -1,11 +1,14 @@
 // Function to get all selected school's DBN
 // $(".schoolSelected").each( function(index, school){ console.log( school.id ); } );
-var width = $(document).width() * 0.35,
-	height = width,
-	padding_height = 70,
-	padding_width = 110,
-	data,
-	filtered;
+var padding_height = 70,
+		padding_width = 110,
+		columnwidth = ( $(document).width() * (6/12) ),
+		documentHeight = ($(document).height() - 51 - (2 * padding_height));
+
+var width = columnwidth,
+		height = documentHeight,
+		data,
+		filtered;
 
 var colorMap = {
 	'Early Childhood': '#A6CEE3',
@@ -298,7 +301,7 @@ var unhighlight = function(table){
 	if( table.length > 0 ){
 		// Update list of schools based on selected
 		for( var i = 0; i < table.length; ++i ){
-			if( table[i].className = "schoolSelected" )
+			if( table[i].className == "schoolSelected" )
 				table[i].className = "";
 		}
 	}
