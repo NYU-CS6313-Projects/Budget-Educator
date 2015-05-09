@@ -29,6 +29,33 @@ var tabulate = function (data, columns) {
 	    .enter()
 	  .append('tr')
 	  .attr('id', function (d) { return d['DBN']; } )
+	  .attr("category", function(d) { 
+	  	switch ( d[ 'School Category' ] ) {
+		    case "Elementary":
+		        return 'elementary';
+		        break;
+		    case "Intermediate":
+		        return 'intermediate';
+		        break;
+		    case "K-8":
+		        return 'k-8';
+		        break;
+		    case "Secondary School":
+		        return 'secondaryschool'
+		        break;
+		    case "Early Childhood":
+		        return 'earlychildhood';
+		        break;
+		    case "High School":
+		        return 'highschool';
+		        break;
+		    case "K-12":
+		        return 'k-12';
+		        break;
+			};
+			
+			return '';
+	  })
 	  .on( 'click', function() {
 	  	// If you click on the row, it adds or removes the .schoolSelected class
 		  $( this ).toggleClass( 'schoolSelected' );
@@ -44,7 +71,7 @@ var tabulate = function (data, columns) {
       })
       .enter()
     .append('td')
-      .html(function (d) { return  "<span class='data'></span> <p class='schoolName'>" + d.value + "</p>"});
+      .html(function (d) { return  "<span class='data'></span><br><span class='schoolName'>" + d.value + "</span>"});
  
   return table;
 }

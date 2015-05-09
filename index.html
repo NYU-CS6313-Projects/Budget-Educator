@@ -45,23 +45,21 @@
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a id="clear" href="#">Clear All</a></li>
+          <li><a id="reset" href="#">Reset</a></li>
         </ul>
       </div>
     </div>
   </nav>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="sidebar sidebar-left col-xs-12 col-sm-3 col-md-2">
-				<table id="directory" class="table table-striped">
-				</table>
-			</div>
-      <div class="col-sm-5 col-sm-offset-3 col-md-6 col-md-offset-2 main">        
-        <div id="scatterplot"></div>
-          <!-- <p><b>X-Axis:</b> <span id="x-a">Total Budget / Number of Students (in School)</span> </p>
-          <p><b>Y-Axis:</b> <span id="y-a"></span> </p> -->
+      <div class="sidebar sidebar-left col-xs-12 col-sm-3 col-md-2">
+        <table id="directory" class="table">
+        </table>
       </div>
-      <div class="col-sm-4 col-md-4 main" id="map">
+      <div class="col-sm-6 col-md-7 main col-sm-offset-3 col-md-offset-2">        
+        <div id="scatterplot"></div>
+      </div>
+      <div class="col-sm-3 col-md-3 main" id="map">
       </div>
 		</div>
 	</div>
@@ -70,75 +68,6 @@
   <script src="scripts/scatterplot.js"></script>  
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
   <script src="scripts/map.js"></script>
-  <script type="text/javascript">
-
-    var remove = function( id, removingClass ){
-      $( id ).each(function( index ) {
-          $( this ).removeClass( removingClass );
-        });
-    }
-
-    // Imports the CSV, fills in the Y-Axis listing and school listing in table
-    d3.csv("overview.csv", function( directory ) {
-      var categories = [];
-
-      // Initialize the interface and save the table for faster lookup
-      var table = loadInterface( directory );
-
-      // Store the directory into a var in scatterplot.js to prevent having to pass data around more than once
-      cacheData( directory );
-
-      // Load up and populate the scatterplot
-      var initialY = $('#y-axis li.dropdownSelected a')[0].text;
-      var plot = loadScatterPlot();
-      populatePlot( table, plot, initialY, categories );
-
-      // Configure the y-axis dropdown to update the scatterplot on click
-      $('#y-axis li a').on('click', function(e){
-        populatePlot( table, plot, $(this)[0].text, categories );
-      });
-
-      // Configure the school category dropdown to update the scatterplot 
-      $('#school-category').on('click', function(e){
-        var ylabel = $("#y-axis .dropdownSelected a")[0].text;
-
-        // Update the scatterplot based on what school categories to focus on
-        categories = [];
-        $("#school-category .dropdownSelected a").each(function(index, category){
-          categories.push(category.text);
-        })
-
-        populatePlot( table, plot, ylabel, categories );
-
-      });
-
-      // Configure each school selection to update the scatterplot on click
-      $('#directory').on('click', function(e){
-        var selection = [];
-        $(".schoolSelected").each( function(index, school){ 
-          selection.push( school.id ); 
-        });
-        highlight(selection, table);
-      });
-
-      $( "#clear" ).on('click', function() {
-
-        $("#y-axis-label").text( "Y-Axis: " );
-        $("#school-category-label").text( "School Category: " );
-        remove( "#y-axis li", 'dropdownSelected' );
-        remove( "#school-category li", 'dropdownSelected' );
-        remove( ".schoolSelected", 'schoolSelected' );
-
-        // Default y-axis selection to the first item
-        $( "#y-axis li:first-child" ).addClass( 'dropdownSelected' );
-        categories = [];
-
-        highlight( [], table);
-        showAllTableEntries();
-        sortBySelection( false );
-        populatePlot( table, plot, 'Total Enrollment', categories );
-      });
-    });
-  </script>
+  <script src="scripts/implementation.js"></script>
 </body>
 </html>
