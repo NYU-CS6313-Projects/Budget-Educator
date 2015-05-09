@@ -8,14 +8,20 @@ var width = $(document).width() * 0.35,
 	filtered;
 
 var colorMap = {
-	'Elementary': 'blue',
-	'Intermediate': 'green',
-	'K-8': 'red',
-	'Secondary School': 'orange',
-	'Early Childhood': 'lightblue',
-	'High School': 'lightgreen',
-	'K-12': 'pink'
+	'Early Childhood': '#A6CEE3',
+	'Elementary': '#1F78B4',
+	'High School': '#B2DF8A',
+	'Intermediate': '#33A02C',
+	'K-12': '#FB9A99',
+	'K-8': '#E31A1C',
+	'Secondary School': '#FDBF6F'
 }
+
+d3.selection.prototype.moveToFront = function(){
+	return this.each(function(){
+		this.parentNode.appendChild(this);
+	});
+};
 
 // Save tableData to a variable so it doesn't need to be constantly passed through parameters
 var cacheData = function( tableData ){ data = tableData; }
@@ -40,14 +46,15 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 
 	filtered = filtered.sort( function(a,b) {
 		return d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
-	})
+	});
 
 
 	// Get x-axis (budget per student) scale
 	var x_range = d3.extent(filtered, function (d, i) { return parseFloat(d["Budget Per Student"]); });
 	var x_scale = d3.scale.linear()
 					.domain([0, x_range[1]])
-					.range([padding_width,width+(padding_width/4)]);
+					.range([padding_width,width+(padding_width/2)])
+					.nice();
 
 	// Get y-axis scale 
 	var y_range = d3.extent(filtered, function(d, i) { 
@@ -66,7 +73,8 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	else{
 		y_scale = d3.scale.linear()
 					.domain([y_range[1], 0])
-					.range([padding_height,height]);
+					.range([padding_height,height])
+					.nice();
 	}
 
 	// Create the axes and have their tick markers create a grid-like pattern
@@ -78,18 +86,18 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	plot.select(".x.axis")
 		.attr("transform", "translate(0," + height + ")" )
 		.transition()
-			.duration(750)
+			.duration(2000)
 		.call(xAxis)
         .selectAll("text")
-            .attr("transform", function(d){ if(d) return "translate(0," + padding_height/4 + "), rotate(-65)"});
+            .attr("transform", function(d){ if(d) return "translate(0," + padding_height/4 + "), rotate(-65)"})
 
 	plot.select(".y.axis")
 		.attr("transform", "translate(" + padding_width + ",0)" )
 		.transition()
-			.duration(750)
+			.duration(2000)
 		.call(yAxis);
 	plot.select(".y.label")
-		.text("Y-Axis: " + yAxisLabel)
+		.text("Y-Axis: " + yAxisLabel);
 
 	// Track what points were selected before updating the graph
     var selection = [];
@@ -103,12 +111,15 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 
 	// Update the values of existing points
 	oldPlots.transition()
-				.duration(750)
+				.duration(2000)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
 				"cy": function(d) { return y_scale(d[yAxisLabel]);  },
 				"r": function(d)  { return ( d[yAxisLabel] ) ? 3 : 0; }
-			});
+			})
+			.style('fill', function(d){ return colorMap[d['School Category']]; })
+			.style('stroke-width', 0 )
+			.style('stroke', function(d){ return d3.rgb(colorMap[d['School Category']]).brighter(1.5); });
 
 	// Append new points if needed
     oldPlots.enter()
@@ -119,14 +130,17 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 				"r": function(d)  { return ( d[yAxisLabel] ) ? 3 : 0; }
 			})
 				.style('opacity', 0)
+				.style('fill', function(d){ return colorMap[d['School Category']]; })
+				.style('stroke-width', 0 )
+				.style('stroke', function(d){ return d3.rgb(colorMap[d['School Category']]).brighter(1.5); })
 			.transition()
-				.duration(750)
+				.duration(2000)
 				.style('opacity', 0.3)
 
 	// Remove points that no longer apply
 	oldPlots.exit()
 			.transition()
-				.duration(750)
+				.duration(2000)
 				.style('opacity', 0)
 			.remove();
 
@@ -139,8 +153,9 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	});
 	limitSchoolCategory(shownSchools);
 
+	// Update the highlights
+    highlight(selection, table); 
     applyLasso( plot );
-    highlight(selection, table); // Update the highlights
 }
 
 var loadScatterPlot = function(){
@@ -170,7 +185,7 @@ var loadScatterPlot = function(){
         	.attr("class", "x label")
         	.attr("text-anchor", "center")
         	.attr("x", (width+padding_width/2)/2)
-        	.attr("y", height + padding_height - 12)
+        	.attr("y", height + padding_height - 15)
         	.text("Budget Per Student");
 
 	plot.append("text")
@@ -178,6 +193,7 @@ var loadScatterPlot = function(){
     	.attr("text-anchor", "center")
     	.attr("transform", "translate(" + (width + (padding_width/2) + 12) + ", " + padding_height/2 + ") rotate(90)")
     	.text("Y-Axis");
+
 
 	return plot;
 }
