@@ -32,7 +32,8 @@ var cacheData = function( tableData ){ data = tableData; }
 var fetchFilteredData = function(){ return filtered; }
 
 // Repopulate the scatterplot based on some yAxisLabel
-var populatePlot = function( table, plot, yAxisLabel, schoolType ){
+var populatePlot = function( table, plot, yAxisLabel, schoolType ){	
+	updateSchoolTypeFromDropdown(schoolType);
 	filtered = data.filter(function(d) { 
 
 		// Remove nulls and empty strings
@@ -247,6 +248,7 @@ var applyLasso = function( plot ){
 							}
 						});
 						highlight(selected, table);
+						updateSelectedSchoolsFromLasso(selected);
 
 						if( table.length > 0 ){
 							// Update list of schools based on selected
@@ -267,6 +269,7 @@ var applyLasso = function( plot ){
 						if( coords.length === 0 ){
 							d3.selectAll("svg path").remove();
 							unhighlight(table);
+							hideSpecificSchoolsLayer();
 							sortBySelection(false);
 							return;
 						}
