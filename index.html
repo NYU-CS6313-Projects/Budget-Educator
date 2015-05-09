@@ -44,6 +44,9 @@
               <ul class="dropdown-menu scrollable-menu" id="y-axis"></ul>
             </li>
         </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a id="clear" href="#">Clear All</a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -63,15 +66,21 @@
 		</div>
 	</div>
 
-	
-	<script src="scripts/table.js"></script>
+  <script src="scripts/table.js"></script>
   <script src="scripts/scatterplot.js"></script>  
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
   <script src="scripts/map.js"></script>
   <script type="text/javascript">
 
+    var remove = function( id, removingClass ){
+      $( id ).each(function( index ) {
+          $( this ).removeClass( removingClass );
+        });
+    }
+
     // Imports the CSV, fills in the Y-Axis listing and school listing in table
     d3.csv("overview.csv", function( directory ) {
+      var categories = [];
 
       // Initialize the interface and save the table for faster lookup
       var table = loadInterface( directory );
@@ -82,13 +91,25 @@
       // Load up and populate the scatterplot
       var initialY = $('#y-axis li.dropdownSelected a')[0].text;
       var plot = loadScatterPlot();
-      $( "#y-a" ).html( initialY );
-      populatePlot( plot, initialY );
+      populatePlot( table, plot, initialY, categories );
 
       // Configure the y-axis dropdown to update the scatterplot on click
       $('#y-axis li a').on('click', function(e){
-        populatePlot( plot, $(this)[0].text );
-        $( "#y-a" ).html( $(this)[0].text );
+        populatePlot( table, plot, $(this)[0].text, categories );
+      });
+
+      // Configure the school category dropdown to update the scatterplot 
+      $('#school-category').on('click', function(e){
+        var ylabel = $("#y-axis .dropdownSelected a")[0].text;
+
+        // Update the scatterplot based on what school categories to focus on
+        categories = [];
+        $("#school-category .dropdownSelected a").each(function(index, category){
+          categories.push(category.text);
+        })
+
+        populatePlot( table, plot, ylabel, categories );
+
       });
 
       // Configure each school selection to update the scatterplot on click
@@ -98,7 +119,25 @@
           selection.push( school.id ); 
         });
         highlight(selection, table);
-      })
+      });
+
+      $( "#clear" ).on('click', function() {
+
+        $("#y-axis-label").text( "Y-Axis: " );
+        $("#school-category-label").text( "School Category: " );
+        remove( "#y-axis li", 'dropdownSelected' );
+        remove( "#school-category li", 'dropdownSelected' );
+        remove( ".schoolSelected", 'schoolSelected' );
+
+        // Default y-axis selection to the first item
+        $( "#y-axis li:first-child" ).addClass( 'dropdownSelected' );
+        categories = [];
+
+        highlight( [], table);
+        showAllTableEntries();
+        sortBySelection( false );
+        populatePlot( table, plot, 'Total Enrollment', categories );
+      });
     });
   </script>
 </body>

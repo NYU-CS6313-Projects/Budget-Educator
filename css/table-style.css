@@ -65,3 +65,11 @@ td { break-word: word-wrap; }
 .main .page-header {
   margin-top: 0;
 }
+
+.data{
+  font-size: small;
+}
+
+.schoolName{
+  font-weight: bold;
+}
