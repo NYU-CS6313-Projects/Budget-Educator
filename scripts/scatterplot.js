@@ -2,7 +2,7 @@
 // $(".schoolSelected").each( function(index, school){ console.log( school.id ); } );
 var padding_height = 70,
 		padding_width = 110,
-		columnwidth = ( $(document).width() * (6/12) ),
+		columnwidth = ( $('#scatterplot').width() - padding_width ),
 		documentHeight = ($(document).height() - 51 - (2 * padding_height));
 
 var width = columnwidth,

@@ -23,22 +23,23 @@ td { break-word: word-wrap; }
 
 .sidebar{
   color: #575757;
-  position: fixed;
   top: 51px;
   bottom: 0;
   z-index: 1000;
-  display: block;
   padding: 0;
+  display: block;
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto hidden;
   background-color: #1e1e1e;
-  max-height: 200px;
+  max-height: 500px;
   /*border-bottom: 1px solid #2f2f2f;*/
 }
 
 @media (min-width: 768px) {
   .sidebar{
     max-height: 100%;
+    position: fixed;
   }
 }
 
@@ -96,9 +97,9 @@ body::-webkit-scrollbar-thumb {
 /* -------------------------------------------------------- SCROLLABLE FILTER */
 
 .scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
 }
 
 .schoolSelected{
