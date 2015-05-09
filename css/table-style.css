@@ -19,14 +19,14 @@ td { break-word: word-wrap; }
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, 
 .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
   border-top: 1px solid #1e1e1e;
-  border-bottom: 1px solid #2f2f2f;
+  border-bottom: 1px solid #585858;
 }
 
 
 /* ------------------------------------------------------------------ SIDEBAR */
 
 .sidebar{
-  color: #575757;
+  color: #0e0e0e;
   top: 0;
   bottom: 0;
   z-index: 1000;
@@ -35,9 +35,9 @@ td { break-word: word-wrap; }
   position: relative;
   overflow-x: hidden;
   overflow-y: auto hidden;
-  background-color: #1e1e1e;
+  background-color: #242426;
   max-height: 300px;
-  border-bottom: 3px solid #575757;
+  border-bottom: 3px solid #585858;
 }
 
 @media (min-width: 768px) {
@@ -45,22 +45,22 @@ td { break-word: word-wrap; }
     top: 51px;
     max-height: 100%;
     position: fixed;
-    border-bottom: 1px solid #575757;
+    border-bottom: 1px solid #585858;
   }
 }
 
 .sidebar-right{
 	right:0;
-  border-left: 1px solid #2f2f2f;
+  /*border-left: 1px solid #0e0e0e;*/
 }
 
 .sidebar-left{
   left: 0;
-  border-right: 1px solid #2f2f2f;
+  /*border-right: 1px solid #0e0e0e;*/
 }
 
 .sidebar::-webkit-scrollbar {
-  background-color: #1e1e1e;
+  background-color: #242426;
 }
  
 .sidebar::-webkit-scrollbar-track {
@@ -111,12 +111,12 @@ td { break-word: word-wrap; }
 
 .schoolSelected{
   opacity: 1 !important;
-  background-color: #2f2f2f;
+  background-color: #0e0e0e;
 	/*color: #1e1e1e !important;*/
 }
 
 .schoolSelected td{
-  border-bottom: 1px solid #1e1e1e !important;
+  border-bottom: 1px solid #585858 !important;
 }
 
 .dropdownSelected{

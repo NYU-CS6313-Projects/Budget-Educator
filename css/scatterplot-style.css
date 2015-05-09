@@ -1,8 +1,8 @@
 body, #scatterplot{
-    background: rgb(30,30,30);
+    background: #242426;
 }
 #scatterplot svg rect{
-    fill: rgb(30,30,30); /*subject to change*/
+    fill: #242426; /*subject to change*/
     stroke-width: 0.25px;
 }
 
