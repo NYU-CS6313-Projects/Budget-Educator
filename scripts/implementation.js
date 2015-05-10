@@ -19,10 +19,12 @@ d3.csv("overview.csv", function( directory ) {
   var initialY = $('#y-axis li.dropdownSelected a')[0].text;
   var plot = loadScatterPlot();
   populatePlot( table, plot, initialY, categories );
+  sortBySelection(false);
 
   // Configure the y-axis dropdown to update the scatterplot on click
   $('#y-axis li a').on('click', function(e){
     populatePlot( table, plot, $(this)[0].text, categories );
+    sortBySelection(true, $(this)[0].text);
   });
 
   // Configure the school category dropdown to update the scatterplot 

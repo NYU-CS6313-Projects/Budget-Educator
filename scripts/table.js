@@ -125,15 +125,35 @@ var loadInterface = function( directory ){
 
 }
 
-var sortBySelection = function( bySelection ){
+var sortBySelection = function( bySelection, label){
 	var table = $("table");
+	var yAxisLabel = (label) ? label : $("#y-axis .dropdownSelected a")[0].text;
+
+	var tableBody = d3.select("tbody");
+	tableBody.selectAll("tr").sort( function(a, b){
+		var tiebreaker = d3.ascending(a['School Name'].toLowerCase(), b['School Name'].toLowerCase() );
+		var compareVal;
+
+		if( isNaN(a[yAxisLabel]) )
+			compareVal = d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
+		else
+			compareVal = d3.ascending(parseFloat(a[yAxisLabel]), parseFloat(b[yAxisLabel]));
+
+		return compareVal || tiebreaker;
+	});
+
 	if( bySelection ){
-		table.prepend( table.find( 'tr.' + "schoolSelected"));
-	}
-	else{
-		var tableBody = d3.select("tbody");
-		tableBody.selectAll("tr").sort( function(a, b){
-			return d3.ascending(a["School Name"].toLowerCase(), b["School Name"].toLowerCase());
+		table.prepend( table.find( 'tr.schoolSelected' ) );
+		d3.selectAll("tr.schoolSelected").sort( function(a, b){
+			var tiebreaker = d3.ascending(a['School Name'].toLowerCase(), b['School Name'].toLowerCase() );
+			var compareVal;
+
+			if( isNaN(a[yAxisLabel]) )
+				compareVal = d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase());
+			else
+				compareVal = d3.ascending(parseFloat(a[yAxisLabel]), parseFloat(b[yAxisLabel]));
+
+			return compareVal || tiebreaker;
 		});
 	}
 }
