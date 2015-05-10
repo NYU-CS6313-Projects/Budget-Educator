@@ -59,6 +59,7 @@ var tabulate = function (data, columns) {
 	  .on( 'click', function() {
 	  	// If you click on the row, it adds or removes the .schoolSelected class
 		  $( this ).toggleClass( 'schoolSelected' );
+		  updateSelectedSchoolsFromTable();
 		});
 
 	// Adds the individual cells per row
