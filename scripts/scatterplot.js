@@ -242,13 +242,24 @@ var applyLasso = function( plot ){
 							});
 
 						// Find out which points were inside the draw path
+						
+
 						var selected = [];
+
+						// If shift clicked, get old selection to "union" with
+						if( d3.event.sourceEvent.shiftKey ){
+							d3.selectAll('.highlighted').each(function(d,i){
+								selected.push(d['DBN']);
+							});
+						}
+
 						svg.selectAll("circle").each(function(d, i) {
 							var point = [d3.select(this).attr("cx"), d3.select(this).attr("cy")];
 							if( pointInPoly(point, coords) ){
 								selected.push(d["DBN"]);
 							}
 						});
+
 						highlight(selected, table);
 						updateSelectedSchoolsFromLasso(selected);
 
