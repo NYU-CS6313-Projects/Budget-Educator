@@ -162,6 +162,7 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	// Update the highlights
     highlight(selection, table); 
     applyLasso( plot );
+    sortBySelection(true, yAxisLabel);
 }
 
 var loadScatterPlot = function(){
