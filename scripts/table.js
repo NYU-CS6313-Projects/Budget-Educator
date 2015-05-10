@@ -1,6 +1,6 @@
 // This array holds the column names of those we are excluding from Y-Axis
 var excludes = ['DBN', 'School Name', 'Street Address', 'City', 'State', 
-	'Zip Code', 'Borough', 'Latitude', 'Longitude', 'Coordinates', 'Budget',
+	'Zip Code', 'Borough', 'Latitude', 'Longitude', 'Coordinates', /*'Budget',*/
 	'Budget Per Student', 'Report Type'];
 
 // This array holds the distinct school types from the list of schools
