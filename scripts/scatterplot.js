@@ -90,7 +90,7 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	plot.select(".x.axis")
 		.attr("transform", "translate(0," + height + ")" )
 		.transition()
-			.duration(2000)
+			.duration(filtered.length + 750)
 		.call(xAxis)
         .selectAll("text")
             .attr("transform", function(d){ if(d) return "translate(0," + padding_height/4 + "), rotate(-65)"})
@@ -98,7 +98,7 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	plot.select(".y.axis")
 		.attr("transform", "translate(" + padding_width + ",0)" )
 		.transition()
-			.duration(2000)
+			.duration(filtered.length + 750)
 		.call(yAxis);
 	plot.select(".y.label")
 		.text("Y-Axis: " + yAxisLabel);
@@ -115,7 +115,7 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 
 	// Update the values of existing points
 	oldPlots.transition()
-				.duration(2000)
+				.duration(filtered.length + 750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
 				"cy": function(d) { return y_scale(d[yAxisLabel]);  },
@@ -128,24 +128,26 @@ var populatePlot = function( table, plot, yAxisLabel, schoolType ){
 	// Append new points if needed
     oldPlots.enter()
 	        .append("circle")
+	        	.attr('cy', 0)
+	        	.attr('r', 0)
+        		.style('opacity', 0)
+			.transition()
+				.duration(filtered.length + 750)
 			.attr({
 				"cx": function(d) { return x_scale(d["Budget Per Student"]); },
 				"cy": function(d) { return y_scale(d[yAxisLabel]);  },
 				"r": function(d)  { return ( d[yAxisLabel] ) ? 3 : 0; }
 			})
-				.style('opacity', 0)
-				.style('fill', function(d){ return colorMap[d['School Category']]; })
-				.style('stroke-width', 0 )
-				.style('stroke', function(d){ return d3.rgb(colorMap[d['School Category']]).brighter(1.5); })
-			.transition()
-				.duration(2000)
-				.style('opacity', 0.3)
+			.style('fill', function(d){ return colorMap[d['School Category']]; })
+			.style('stroke-width', 0 )
+			.style('stroke', function(d){ return d3.rgb(colorMap[d['School Category']]).brighter(1.5); })
+			.style('opacity', 0.3)
 
 	// Remove points that no longer apply
 	oldPlots.exit()
 			.transition()
-				.duration(2000)
-				.style('opacity', 0)
+				.duration(filtered.length)
+			.attr("r", 0)
 			.remove();
 
 	// Reset the table, has to be here due to asynchronous D3
@@ -240,13 +242,24 @@ var applyLasso = function( plot ){
 							});
 
 						// Find out which points were inside the draw path
+						
+
 						var selected = [];
+
+						// If shift clicked, get old selection to "union" with
+						if( d3.event.sourceEvent.shiftKey ){
+							d3.selectAll('.highlighted').each(function(d,i){
+								selected.push(d['DBN']);
+							});
+						}
+
 						svg.selectAll("circle").each(function(d, i) {
 							var point = [d3.select(this).attr("cx"), d3.select(this).attr("cy")];
 							if( pointInPoly(point, coords) ){
 								selected.push(d["DBN"]);
 							}
 						});
+
 						highlight(selected, table);
 						updateSelectedSchoolsFromLasso(selected);
 

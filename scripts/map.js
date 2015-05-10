@@ -45,11 +45,13 @@ var updateMap = function(filterBy){
 
 var updateSpecificSchoolsLayer = function(){
 	sublayerWithSpecificSchools.setSQL("SELECT * FROM overview_1 WHERE dbn IN (" + arrSelectedSchools + ")");	
-	sublayerWithSpecificSchools.show();			
+	sublayerWithSpecificSchools.show();	
+	mapLayerWithAllSchools.hide();		
 }
 
 var hideSpecificSchoolsLayer = function(){
 	sublayerWithSpecificSchools.hide();
+	mapLayerWithAllSchools.show();		
 }
 
 var updateSelectedSchoolsFromLasso = function(schools){
