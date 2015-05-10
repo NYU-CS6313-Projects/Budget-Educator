@@ -46,6 +46,7 @@ d3.csv("overview.csv", function( directory ) {
       selection.push( school.id ); 
     });
     highlight(selection, table);
+    sortBySelection(true);
   });
 
   $( "#reset" ).on('click', function() {
