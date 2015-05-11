@@ -134,7 +134,7 @@ var sortBySelection = function( bySelection, label){
 	var tableBody = d3.select("tbody");
 	tableBody.selectAll("tr").sort( function(a, b){
 		var tiebreaker = d3.ascending(a['School Name'].toLowerCase(), b['School Name'].toLowerCase() );
-		var compareVal = ( isNaN(a[yAxisLabel]) ) ? d3.descending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase()) :
+		var compareVal = ( isNaN(a[yAxisLabel]) ) ? d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase()) :
 													d3.descending(parseFloat(a[yAxisLabel]), parseFloat(b[yAxisLabel]));
 
 		return (compareVal !== 0) ? compareVal : tiebreaker;
@@ -145,7 +145,7 @@ var sortBySelection = function( bySelection, label){
 		table.prepend( table.find( 'tr.schoolSelected' ) );
 		d3.selectAll("tr.schoolSelected").sort( function(a, b){
 			var tiebreaker = d3.ascending(a['School Name'].toLowerCase(), b['School Name'].toLowerCase() );
-			var compareVal = ( isNaN(a[yAxisLabel]) ) ? d3.descending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase()) :
+			var compareVal = ( isNaN(a[yAxisLabel]) ) ? d3.ascending(a[yAxisLabel].toLowerCase(), b[yAxisLabel].toLowerCase()) :
 														d3.descending(parseFloat(a[yAxisLabel]), parseFloat(b[yAxisLabel]));
 
 			return (compareVal !== 0) ? compareVal : tiebreaker;
