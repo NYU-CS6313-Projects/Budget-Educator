@@ -1,5 +1,3 @@
-###Demo Link: http://nyu-cs6313-projects.github.io/Budget-Educator
----
 #Budget Educator
 
 ###Description
@@ -15,4 +13,7 @@ This repo runs on a WAMP/MAMP/LAMP environment. Attempting to just open the inde
 http://nyu-cs6313-projects.github.io/Budget-Educator
 
 ###Final Proposal (to be completed)
-###Video (to be completed)
+
+
+###Video
+https://vimeo.com/128095858
